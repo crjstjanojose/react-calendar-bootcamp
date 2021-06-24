@@ -3,25 +3,21 @@ import { CalendarScreen } from "./CalendarScreen";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { getToday } from "./dateFunctions";
 import { useEffect, useState } from "react";
-import { getUserEndPoint } from "./backend";
+import { getUserEndPoint, IUser } from "./backend";
 import { LoginScreen } from "./LoginScreen";
 
 function App() {
   const month = getToday().substring(0, 7);
-  const [hasSession, setHasSession] = useState(false);
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     getUserEndPoint().then(
-      () => {
-        setHasSession(true);
-      },
-      () => {
-        setHasSession(false);
-      }
+      () => setUser(user),
+      () => setUser(null)
     );
   });
 
-  if (hasSession) {
+  if (user) {
     return (
       <Router>
         <Switch>
@@ -33,7 +29,7 @@ function App() {
       </Router>
     );
   } else {
-    return <LoginScreen />;
+    return <LoginScreen onSignIn={(user) => setUser(user)} />;
   }
 }
 

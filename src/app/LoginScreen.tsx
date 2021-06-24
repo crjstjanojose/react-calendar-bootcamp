@@ -1,16 +1,41 @@
+import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import { useState } from "react";
+import { IUser, signEndPoint } from "./backend";
 
-export function LoginScreen() {
-  const [email, setEmail] = useState("danilio@email.com");
+const useStyles = makeStyles({
+  error: {
+    backgroundColor: "rgba(255,223,222)",
+    padding: "6px;",
+    marginTop: "8px",
+    color: "rgb(255,0,0)",
+    borderRadius: "3px",
+  },
+});
+
+interface ILoginScreenProps {
+  onSignIn: (user: IUser) => void;
+}
+
+export function LoginScreen(props: ILoginScreenProps) {
+  const [email, setEmail] = useState("danilo@email.com");
   const [password, setPassword] = useState("1234");
+  const [error, setError] = useState("");
+  const classes = useStyles();
 
   function signIn(evt: React.FormEvent) {
     evt.preventDefault();
-    console.log("signIn");
+    signEndPoint(email, password).then(
+      (user) => {
+        props.onSignIn(user);
+      },
+      (error) => {
+        setError("E-mail não encontrado ou senha incorreta.");
+      }
+    );
   }
 
   return (
@@ -34,10 +59,11 @@ export function LoginScreen() {
           label="Password"
           variant="outlined"
           fullWidth
-          type="password "
+          type="password"
           value={password}
           onChange={(evt) => setPassword(evt.target.value)}
         />
+        {error && <div className={classes.error}>{error}</div>}
         <Box marginTop="10px" textAlign="right">
           <Button variant="contained" color="primary" type="submit">
             Entrar
