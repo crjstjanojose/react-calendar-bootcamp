@@ -1,7 +1,15 @@
 import { IUser } from "./backend";
 import React from "react";
 
-export const userContext = React.createContext<IUser>({
-  name: "Anônimo",
-  email: "",
+export interface IAuthContext {
+  user: IUser;
+  onSignOut: () => void;
+}
+
+export const authContext = React.createContext<IAuthContext>({
+  user: {
+    name: "Anônimo",
+    email: "",
+  },
+  onSignOut: () => {},
 });

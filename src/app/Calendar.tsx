@@ -8,6 +8,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Box from "@material-ui/core/Box";
 import Icon from "@material-ui/core/Icon";
 import { ICalendar, IEvent } from "./backend";
+import { getToday } from "./dateFunctions";
 
 const DAYS_OF_WEEK = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
 
@@ -29,8 +30,16 @@ const useStyles = makeStyles({
     borderTop: "1px solid rgb(224,224,224)",
   },
   dayOfMonth: {
+    display: "inline-block",
     fontWeight: 500,
+    width: "26px",
+    lineHeight: "24px",
+    color: "#fff",
     marginBottom: "4px",
+    "&.today": {
+      backgroundColor: "#3f51b5",
+      borderRadius: "50%",
+    },
   },
   event: {
     display: "flex",
@@ -87,7 +96,9 @@ export function Calendar(props: ICalendarProps) {
                   key={cell.date}
                   onClick={(mevt) => handleClickCell(mevt, cell.date)}
                 >
-                  <div className={classes.dayOfMonth}>{cell.dayOfMonth}</div>
+                  <div className={classes.dayOfMonth + (cell.date === getToday() ? " today" : "")}>
+                    {cell.dayOfMonth}
+                  </div>
                   {cell.events.map((event) => {
                     const color = event.calendar.color;
                     return (

@@ -6,7 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { useState, useContext } from "react";
 import { signOutEndPoint } from "./backend";
 import { makeStyles } from "@material-ui/core/styles";
-import { userContext } from "./authContext";
+import { authContext } from "./authContext";
 
 const useStyles = makeStyles({
   userDetails: {
@@ -22,12 +22,8 @@ const useStyles = makeStyles({
   },
 });
 
-interface IUserMenu {
-  onSignOut: () => void;
-}
-
-export function UserMenu(props: IUserMenu) {
-  const user = useContext(userContext);
+export function UserMenu() {
+  const { user, onSignOut } = useContext(authContext);
 
   const classes = useStyles();
 
@@ -43,7 +39,7 @@ export function UserMenu(props: IUserMenu) {
 
   function signOut() {
     signOutEndPoint();
-    props.onSignOut();
+    onSignOut();
   }
 
   return (

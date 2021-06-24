@@ -5,7 +5,7 @@ import { getToday } from "./dateFunctions";
 import { useEffect, useState } from "react";
 import { getUserEndPoint, IUser } from "./backend";
 import { LoginScreen } from "./LoginScreen";
-import { userContext } from "./authContext";
+import { authContext } from "./authContext";
 
 function App() {
   const month = getToday().substring(0, 7);
@@ -14,26 +14,26 @@ function App() {
   useEffect(() => {
     getUserEndPoint().then(
       (user) => setUser(user),
-      () => signOut()
+      () => onSignOut()
     );
   }, [user]);
 
-  function signOut() {
+  function onSignOut() {
     setUser(null);
   }
 
   if (user) {
     return (
-      <userContext.Provider value={user}>
+      <authContext.Provider value={{ user, onSignOut }}>
         <Router>
           <Switch>
             <Route path="/calendar/:month">
-              <CalendarScreen onSignOut={signOut}></CalendarScreen>;
+              <CalendarScreen></CalendarScreen>;
             </Route>
             <Redirect to={{ pathname: "/calendar/" + month }}></Redirect>
           </Switch>
         </Router>
-      </userContext.Provider>
+      </authContext.Provider>
     );
   } else {
     return <LoginScreen onSignIn={(user) => setUser(user)} />;

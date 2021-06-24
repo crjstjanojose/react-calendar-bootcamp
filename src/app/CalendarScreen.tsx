@@ -15,11 +15,7 @@ import { EventFormDialog } from "./EventFormDialog";
 import { Calendar, ICalendarCell, IEventWithCalendar } from "./Calendar";
 import { getToday } from "./dateFunctions";
 
-interface ICalendarScreen {
-  onSignOut: () => void;
-}
-
-export function CalendarScreen(props: ICalendarScreen) {
+export function CalendarScreen() {
   const { month } = useParams<{ month: string }>();
   const [editingEvent, setEditingEvent] = useState<IEditingEvent | null>(null);
   const [events, setEvents] = useState<IEvent[]>([]);
@@ -74,7 +70,7 @@ export function CalendarScreen(props: ICalendarScreen) {
       </Box>
 
       <Box display="flex" flexDirection="column" flex="1">
-        <CalendarHeader month={month} onSignOut={props.onSignOut} />
+        <CalendarHeader month={month} />
 
         <Calendar weeks={weeks} onClickDay={openNewEvent} onClickEvent={setEditingEvent} />
 
