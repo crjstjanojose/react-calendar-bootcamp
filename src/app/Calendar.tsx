@@ -9,6 +9,7 @@ import Box from "@material-ui/core/Box";
 import Icon from "@material-ui/core/Icon";
 import { ICalendar, IEvent } from "./backend";
 import { getToday } from "./dateFunctions";
+import React from "react";
 
 const DAYS_OF_WEEK = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
 
@@ -65,7 +66,7 @@ interface ICalendarProps {
   onClickEvent: (event: IEvent) => void;
 }
 
-export function Calendar(props: ICalendarProps) {
+export const Calendar = React.memo(function (props: ICalendarProps) {
   const { weeks } = props;
   const classes = useStyles();
 
@@ -138,10 +139,9 @@ export function Calendar(props: ICalendarProps) {
       </Table>
     </TableContainer>
   );
-}
+});
 
 export type IEventWithCalendar = IEvent & { calendar: ICalendar };
-
 export interface ICalendarCell {
   date: string;
   dayOfMonth: number;

@@ -1,6 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   getCalendarsEndPoint,
   getEventsEndPoint,
@@ -39,19 +39,25 @@ export function CalendarScreen() {
     );
   }, [firstDate, lastDate]);
 
-  function handleToggleCalendar(index: number) {
-    const selecteds = [...calendarsSelected];
-    selecteds[index] = !selecteds[index];
-    setCalendarsSelected(selecteds);
-  }
+  const handleToggleCalendar = useCallback(
+    (index: number) => {
+      const selecteds = [...calendarsSelected];
+      selecteds[index] = !selecteds[index];
+      setCalendarsSelected(selecteds);
+    },
+    [calendarsSelected]
+  );
 
-  function openNewEvent(date: string) {
-    setEditingEvent({
-      date,
-      desc: "",
-      calendarId: calendars[0].id,
-    });
-  }
+  const openNewEvent = useCallback(
+    (date: string) => {
+      setEditingEvent({
+        date,
+        desc: "",
+        calendarId: calendars[0].id,
+      });
+    },
+    [calendars]
+  );
 
   function refeshEvents() {
     getEventsEndPoint(firstDate, lastDate).then(setEvents);
