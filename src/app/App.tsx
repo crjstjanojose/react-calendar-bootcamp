@@ -5,6 +5,7 @@ import { getToday } from "./dateFunctions";
 import { useEffect, useState } from "react";
 import { getUserEndPoint, IUser } from "./backend";
 import { LoginScreen } from "./LoginScreen";
+import { userContext } from "./authContext";
 
 function App() {
   const month = getToday().substring(0, 7);
@@ -15,7 +16,7 @@ function App() {
       (user) => setUser(user),
       () => signOut()
     );
-  });
+  }, [user]);
 
   function signOut() {
     setUser(null);
@@ -23,14 +24,16 @@ function App() {
 
   if (user) {
     return (
-      <Router>
-        <Switch>
-          <Route path="/calendar/:month">
-            <CalendarScreen user={user} onSignOut={signOut}></CalendarScreen>;
-          </Route>
-          <Redirect to={{ pathname: "/calendar/" + month }}></Redirect>
-        </Switch>
-      </Router>
+      <userContext.Provider value={user}>
+        <Router>
+          <Switch>
+            <Route path="/calendar/:month">
+              <CalendarScreen onSignOut={signOut}></CalendarScreen>;
+            </Route>
+            <Redirect to={{ pathname: "/calendar/" + month }}></Redirect>
+          </Switch>
+        </Router>
+      </userContext.Provider>
     );
   } else {
     return <LoginScreen onSignIn={(user) => setUser(user)} />;

@@ -3,9 +3,10 @@ import IconButton from "@material-ui/core/IconButton";
 import Avatar from "@material-ui/core/Avatar";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useState } from "react";
-import { IUser, signOutEndPoint } from "./backend";
+import { useState, useContext } from "react";
+import { signOutEndPoint } from "./backend";
 import { makeStyles } from "@material-ui/core/styles";
+import { userContext } from "./authContext";
 
 const useStyles = makeStyles({
   userDetails: {
@@ -23,10 +24,11 @@ const useStyles = makeStyles({
 
 interface IUserMenu {
   onSignOut: () => void;
-  user: IUser;
 }
 
 export function UserMenu(props: IUserMenu) {
+  const user = useContext(userContext);
+
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -62,8 +64,8 @@ export function UserMenu(props: IUserMenu) {
           <Avatar>
             <Icon>person</Icon>
           </Avatar>
-          <div>{props.user.name}</div>
-          <small>{props.user.email}</small>
+          <div>{user.name}</div>
+          <small>{user.email}</small>
         </div>
         <MenuItem onClick={signOut}>Sair</MenuItem>
       </Menu>
