@@ -61,21 +61,28 @@ export function deleteEventEndPoint(eventId: number): Promise<void> {
   }).then(handleResponse);
 }
 
-export function getUserEndPoint(): Promise<void> {
+export function getUserEndPoint(): Promise<IUser> {
   return fetch(`http://localhost:8080/auth/user`, {
     credentials: "include",
     method: "GET",
   }).then(handleResponse);
 }
 
-export function signEndPoint(email: string, password: string): Promise<IUser> {
-  return fetch(`http://localhost:8080/auth/LOGIN`, {
-    method: "POST",
+export function signInEndPoint(email: string, password: string): Promise<IUser> {
+  return fetch(`http://localhost:8080/auth/login`, {
     credentials: "include",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
+  }).then(handleResponse);
+}
+
+export function signOutEndPoint(): Promise<IUser> {
+  return fetch(`http://localhost:8080/auth/logout`, {
+    credentials: "include",
+    method: "POST",
   }).then(handleResponse);
 }
 

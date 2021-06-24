@@ -12,17 +12,21 @@ function App() {
 
   useEffect(() => {
     getUserEndPoint().then(
-      () => setUser(user),
-      () => setUser(null)
+      (user) => setUser(user),
+      () => signOut()
     );
   });
+
+  function signOut() {
+    setUser(null);
+  }
 
   if (user) {
     return (
       <Router>
         <Switch>
           <Route path="/calendar/:month">
-            <CalendarScreen></CalendarScreen>;
+            <CalendarScreen user={user} onSignOut={signOut}></CalendarScreen>;
           </Route>
           <Redirect to={{ pathname: "/calendar/" + month }}></Redirect>
         </Switch>

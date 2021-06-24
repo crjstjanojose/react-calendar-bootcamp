@@ -4,7 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import { useState } from "react";
-import { IUser, signEndPoint } from "./backend";
+import { IUser, signInEndPoint } from "./backend";
 
 const useStyles = makeStyles({
   error: {
@@ -28,7 +28,7 @@ export function LoginScreen(props: ILoginScreenProps) {
 
   function signIn(evt: React.FormEvent) {
     evt.preventDefault();
-    signEndPoint(email, password).then(
+    signInEndPoint(email, password).then(
       (user) => {
         props.onSignIn(user);
       },

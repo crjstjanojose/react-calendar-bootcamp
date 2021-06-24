@@ -7,6 +7,7 @@ import {
   ICalendar,
   IEvent,
   IEditingEvent,
+  IUser,
 } from "./backend";
 import { useParams } from "react-router-dom";
 import { CalendarsView } from "./CalendarsView";
@@ -15,7 +16,12 @@ import { EventFormDialog } from "./EventFormDialog";
 import { Calendar, ICalendarCell, IEventWithCalendar } from "./Calendar";
 import { getToday } from "./dateFunctions";
 
-export function CalendarScreen() {
+interface ICalendarScreen {
+  onSignOut: () => void;
+  user: IUser;
+}
+
+export function CalendarScreen(props: ICalendarScreen) {
   const { month } = useParams<{ month: string }>();
   const [editingEvent, setEditingEvent] = useState<IEditingEvent | null>(null);
   const [events, setEvents] = useState<IEvent[]>([]);
@@ -70,7 +76,7 @@ export function CalendarScreen() {
       </Box>
 
       <Box display="flex" flexDirection="column" flex="1">
-        <CalendarHeader month={month} />
+        <CalendarHeader month={month} user={props.user} onSignOut={props.onSignOut} />
 
         <Calendar weeks={weeks} onClickDay={openNewEvent} onClickEvent={setEditingEvent} />
 
