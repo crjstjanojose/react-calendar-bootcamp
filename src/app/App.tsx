@@ -16,7 +16,7 @@ function App() {
       (user) => setUser(user),
       () => onSignOut()
     );
-  }, [user]);
+  }, []);
 
   function onSignOut() {
     setUser(null);

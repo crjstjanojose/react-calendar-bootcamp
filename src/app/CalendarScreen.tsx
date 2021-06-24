@@ -1,6 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   getCalendarsEndPoint,
   getEventsEndPoint,
@@ -22,7 +22,10 @@ export function CalendarScreen() {
   const [calendars, setCalendars] = useState<ICalendar[]>([]);
   const [calendarsSelected, setCalendarsSelected] = useState<boolean[]>([]);
 
-  const weeks = generateCalendar(month + "-01", events, calendars, calendarsSelected);
+  const weeks = useMemo(() => {
+    return generateCalendar(month + "-01", events, calendars, calendarsSelected);
+  }, [month, events, calendars, calendarsSelected]);
+
   const firstDate = weeks[0][0].date;
   const lastDate = weeks[weeks.length - 1][6].date;
 

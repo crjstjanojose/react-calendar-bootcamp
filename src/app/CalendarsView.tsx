@@ -15,7 +15,7 @@ export function CalendarsView(props: ICalendarViewProps) {
     <Box marginTop="32px">
       <h3>Agendas</h3>
       {calendars.map((calendar, index) => (
-        <div>
+        <div key={calendar.id}>
           <FormControlLabel
             control={
               <Checkbox
