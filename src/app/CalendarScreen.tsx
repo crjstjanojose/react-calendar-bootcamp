@@ -1,6 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useReducer } from "react";
 import {
   getCalendarsEndPoint,
   getEventsEndPoint,
@@ -15,8 +15,48 @@ import { EventFormDialog } from "./EventFormDialog";
 import { Calendar, ICalendarCell, IEventWithCalendar } from "./Calendar";
 import { getToday } from "./dateFunctions";
 
+interface ICalendarScreenState {
+  calendars: ICalendar[];
+  calendarsSelected: boolean[];
+  events: IEvent[];
+  editingEvent: IEditingEvent | null;
+}
+
+type ICalendarScreenAction = {
+  type: "load";
+  payload: {
+    events: IEvent[];
+    calendars: ICalendar[];
+  };
+};
+
+// state nosso estado inicial
+// objeto que representa uma acao -> action vai ter um type e pode ter um payload associado a esta acão
+function reducer(state: ICalendarScreenState, action: ICalendarScreenAction): ICalendarScreenState {
+  switch (action.type) {
+    case "load":
+      return {
+        ...state,
+        events: action.payload.events,
+        calendars: action.payload.calendars,
+        calendarsSelected: action.payload.calendars.map(() => true),
+      };
+    default:
+      return state;
+  }
+}
+
 export function CalendarScreen() {
   const { month } = useParams<{ month: string }>();
+
+  // segundo parâmetro é o estado inicial que vai ser definido no objeto ICalendarScreenState
+  const x = useReducer(reducer, {
+    calendars: [],
+    calendarsSelected: [],
+    events: [],
+    editingEvent: null,
+  });
+
   const [editingEvent, setEditingEvent] = useState<IEditingEvent | null>(null);
   const [events, setEvents] = useState<IEvent[]>([]);
   const [calendars, setCalendars] = useState<ICalendar[]>([]);
