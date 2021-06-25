@@ -10,9 +10,7 @@ import { Calendar, ICalendarCell, IEventWithCalendar } from "./Calendar";
 import { getToday } from "./dateFunctions";
 import { reducer } from "./calendarScreenReducer";
 
-export function CalendarScreen() {
-  const { month } = useParams<{ month: string }>();
-
+function useCalendarScreenState(month: string) {
   // segundo parâmetro é o estado inicial que vai ser definido no objeto ICalendarScreenState
   const [state, dispatch] = useReducer(reducer, {
     calendars: [],
@@ -30,6 +28,12 @@ export function CalendarScreen() {
   const firstDate = weeks[0][0].date;
   const lastDate = weeks[weeks.length - 1][6].date;
 
+  function refeshEvents() {
+    getEventsEndPoint(firstDate, lastDate).then((events) => {
+      dispatch({ type: "load", payload: { events } });
+    });
+  }
+
   useEffect(() => {
     Promise.all([getCalendarsEndPoint(), getEventsEndPoint(firstDate, lastDate)]).then(
       ([calendars, events]) => {
@@ -37,16 +41,25 @@ export function CalendarScreen() {
       }
     );
   }, [firstDate, lastDate]);
+  return {
+    weeks,
+    calendars,
+    dispatch,
+    refeshEvents,
+    calendarsSelected,
+    editingEvent,
+  };
+}
+
+export function CalendarScreen() {
+  const { month } = useParams<{ month: string }>();
+
+  const { weeks, calendars, dispatch, refeshEvents, calendarsSelected, editingEvent } =
+    useCalendarScreenState(month);
 
   const closeDialog = useCallback(() => {
     dispatch({ type: "closeDialog" });
   }, []);
-
-  function refeshEvents() {
-    getEventsEndPoint(firstDate, lastDate).then((events) => {
-      dispatch({ type: "load", payload: { events } });
-    });
-  }
 
   return (
     <Box display="flex" height="100%" alignItems="stretch">

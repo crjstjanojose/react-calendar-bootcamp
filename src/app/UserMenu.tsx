@@ -3,10 +3,10 @@ import IconButton from "@material-ui/core/IconButton";
 import Avatar from "@material-ui/core/Avatar";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { signOutEndPoint } from "./backend";
 import { makeStyles } from "@material-ui/core/styles";
-import { authContext } from "./authContext";
+import { useAuthContext } from "./authContext";
 
 const useStyles = makeStyles({
   userDetails: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
 });
 
 export function UserMenu() {
-  const { user, onSignOut } = useContext(authContext);
+  const { user, onSignOut } = useAuthContext();
 
   const classes = useStyles();
 
