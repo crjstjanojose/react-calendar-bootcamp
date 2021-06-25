@@ -1,87 +1,14 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { useEffect, useCallback, useMemo, useReducer } from "react";
-import {
-  getCalendarsEndPoint,
-  getEventsEndPoint,
-  ICalendar,
-  IEvent,
-  IEditingEvent,
-} from "./backend";
+import { getCalendarsEndPoint, getEventsEndPoint, ICalendar, IEvent } from "./backend";
 import { useParams } from "react-router-dom";
 import { CalendarsView } from "./CalendarsView";
 import { CalendarHeader } from "./CalendarHeader";
 import { EventFormDialog } from "./EventFormDialog";
 import { Calendar, ICalendarCell, IEventWithCalendar } from "./Calendar";
 import { getToday } from "./dateFunctions";
-
-interface ICalendarScreenState {
-  calendars: ICalendar[];
-  calendarsSelected: boolean[];
-  events: IEvent[];
-  editingEvent: IEditingEvent | null;
-}
-
-type ICalendarScreenAction =
-  | {
-      type: "load";
-      payload: {
-        events: IEvent[];
-        calendars?: ICalendar[];
-      };
-    }
-  | {
-      type: "edit";
-      payload: IEvent;
-    }
-  | {
-      type: "closeDialog";
-    }
-  | {
-      type: "new";
-      payload: string;
-    }
-  | {
-      type: "toggleCalendar";
-      payload: number;
-    };
-
-// state nosso estado inicial
-// objeto que representa uma acao -> action vai ter um type e pode ter um payload associado a esta acão
-function reducer(state: ICalendarScreenState, action: ICalendarScreenAction): ICalendarScreenState {
-  switch (action.type) {
-    case "load":
-      const calendars = action.payload.calendars ?? state.calendars;
-      const calendarsSelected = action.payload.calendars
-        ? action.payload.calendars.map(() => true)
-        : state.calendarsSelected;
-      return {
-        ...state,
-        events: action.payload.events,
-        calendars,
-        calendarsSelected,
-      };
-    case "edit":
-      return { ...state, editingEvent: action.payload };
-    case "closeDialog":
-      return { ...state, editingEvent: null };
-    case "new":
-      return {
-        ...state,
-        editingEvent: {
-          date: action.payload,
-          desc: "",
-          calendarId: state.calendars[0].id,
-        },
-      };
-    case "toggleCalendar":
-      const newValue = [...state.calendarsSelected];
-      newValue[action.payload] = !newValue[action.payload];
-      return { ...state, calendarsSelected: newValue };
-    default:
-      return state;
-  }
-}
+import { reducer } from "./calendarScreenReducer";
 
 export function CalendarScreen() {
   const { month } = useParams<{ month: string }>();
@@ -111,20 +38,8 @@ export function CalendarScreen() {
     );
   }, [firstDate, lastDate]);
 
-  const handleToggleCalendar = useCallback((index: number) => {
-    dispatch({ type: "toggleCalendar", payload: index });
-  }, []);
-
-  const openNewEvent = useCallback((date: string) => {
-    dispatch({ type: "new", payload: date });
-  }, []);
-
   const closeDialog = useCallback(() => {
     dispatch({ type: "closeDialog" });
-  }, []);
-
-  const editEvent = useCallback((event: IEvent) => {
-    dispatch({ type: "edit", payload: event });
   }, []);
 
   function refeshEvents() {
@@ -137,13 +52,17 @@ export function CalendarScreen() {
     <Box display="flex" height="100%" alignItems="stretch">
       <Box borderRight="1px solid rgb(224,224,224)" width="14em" padding="8px 16px">
         <h2>Agenda React</h2>
-        <Button variant="contained" color="primary" onClick={() => openNewEvent(getToday())}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => dispatch({ type: "new", payload: getToday() })}
+        >
           Criar Evento
         </Button>
 
         <CalendarsView
           calendars={calendars}
-          handleToggleCalendar={handleToggleCalendar}
+          dispatch={dispatch}
           calendarsSelected={calendarsSelected}
         ></CalendarsView>
       </Box>
@@ -151,7 +70,7 @@ export function CalendarScreen() {
       <Box display="flex" flexDirection="column" flex="1">
         <CalendarHeader month={month} />
 
-        <Calendar weeks={weeks} onClickDay={openNewEvent} onClickEvent={editEvent} />
+        <Calendar weeks={weeks} dispatch={dispatch} />
 
         <EventFormDialog
           event={editingEvent}
